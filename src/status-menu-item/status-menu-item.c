@@ -76,9 +76,9 @@ connui_cellular_status_menu_item_update_icon(ConnuiCellularStatusMenuItem *item)
   guint status = priv->status;
   if (status != 3 && status != 0 && status != 5)
   {
-    if (priv->state.network_reg_status > NETWORK_REG_STATUS_ROAM_BLINK)
+    if (priv->state.network_reg_status > 2)
     {
-      if (priv->state.network_reg_status == NETWORK_REG_STATUS_NOSERV_NOSIM)
+      if (priv->state.network_reg_status == 6)
       {
         mode_icon = 0;
         bars_icon = "statusarea_cell_off";
@@ -88,7 +88,7 @@ connui_cellular_status_menu_item_update_icon(ConnuiCellularStatusMenuItem *item)
     }
     else
     {
-      char rat = priv->state.rat;
+      char rat = priv->state.rat_name;
       if (rat == 2)
       {
         if (priv->state.network_radio_state == 1)
@@ -105,7 +105,7 @@ connui_cellular_status_menu_item_update_icon(ConnuiCellularStatusMenuItem *item)
       }
       else
       {
-        g_log(v4, G_LOG_LEVEL_WARNING, "status->rat unknown %hhu!", rat);
+        g_log(0, G_LOG_LEVEL_WARNING, "status->rat unknown %hhu!", rat);
         mode_icon = 0;
       }
       char bars = priv->state.network_signals_bar;
@@ -173,8 +173,8 @@ static void
 connui_cellular_status_item_display_cb(osso_display_state_t state,
                                             gpointer *user_data)
 {
-  ConnuiInternetStatusMenuItem *item =
-      CONNUI_INTERNET_STATUS_MENU_ITEM(user_data);
+  ConnuiCellularStatusMenuItem *item =
+      CONNUI_CELLULAR_STATUS_MENU_ITEM(user_data);
 
   g_return_if_fail(item != NULL && item->priv != NULL);
 
@@ -183,7 +183,7 @@ connui_cellular_status_item_display_cb(osso_display_state_t state,
   {
     if (item->priv->needs_display_state_update)
     {
-      connui_cellular_status_item_update_icon(item);
+      connui_cellular_status_menu_item_update_icon(item);
       item->priv->needs_display_state_update = FALSE;
     }
   }
@@ -192,61 +192,61 @@ connui_cellular_status_item_display_cb(osso_display_state_t state,
 static void
 connui_cellular_status_item_flightmode_cb(gboolean offline, gpointer user_data)
 {
-  ConnuiInternetStatusMenuItem *item =
-      CONNUI_INTERNET_STATUS_MENU_ITEM(user_data);
+  ConnuiCellularStatusMenuItem *item =
+      CONNUI_CELLULAR_STATUS_MENU_ITEM(user_data);
 
   g_return_if_fail(item != NULL && item->priv != NULL);
 
   item->priv->offline = offline;
-  connui_cellular_status_item_update_icon(item);
+  connui_cellular_status_menu_item_update_icon(item);
 }
 
 static void
 connui_cellular_status_item_sim_status_cb(guint status, gpointer user_data)
 {
-  ConnuiInternetStatusMenuItem *item =
-      CONNUI_INTERNET_STATUS_MENU_ITEM(user_data);
+  ConnuiCellularStatusMenuItem *item =
+      CONNUI_CELLULAR_STATUS_MENU_ITEM(user_data);
 
   g_return_if_fail(item != NULL && item->priv != NULL);
 
   item->priv->status = status;
-  connui_cellular_status_item_update_icon(item);
+  connui_cellular_status_menu_item_update_icon(item);
 }
 
 static void
 connui_cellular_status_item_net_status_cb(struct network_state *state, gpointer user_data)
 {
-  ConnuiInternetStatusMenuItem *item =
-      CONNUI_INTERNET_STATUS_MENU_ITEM(user_data);
+  ConnuiCellularStatusMenuItem *item =
+      CONNUI_CELLULAR_STATUS_MENU_ITEM(user_data);
   if (state)
   {
-    item->priv->state->network_reg_status = state->network_reg_status;
-    item->priv->state->lac = state->lac;
-    item->priv->state->cell_id = state->cell_id;
-    item->priv->state->network = state->network;
-    item->priv->state->supported_services = state->supported_services;
-    item->priv->state->network_signals_bar = state->network_signals_bar;
-    item->priv->state->rat = state->rat;
-    item->priv->state->network_radio_state = state->network_radio_state;
-    item->priv->state->operator_name_type = state->operator_name_type;
-    item->priv->state->operator_name = state->operator_name;
-    item->priv->state->alternative_operator_name = state->alternative_operator_name;
+    item->priv->state.network_reg_status = state->network_reg_status;
+    item->priv->state.lac = state->lac;
+    item->priv->state.cell_id = state->cell_id;
+    item->priv->state.network = state->network;
+    item->priv->state.supported_services = state->supported_services;
+    item->priv->state.network_signals_bar = state->network_signals_bar;
+    item->priv->state.rat_name = state->rat_name;
+    item->priv->state.network_radio_state = state->network_radio_state;
+    item->priv->state.operator_name_type = state->operator_name_type;
+    item->priv->state.operator_name = state->operator_name;
+    item->priv->state.alternative_operator_name = state->alternative_operator_name;
   }
   else
   {
-    item->priv->state->network_reg_status = 0;
-    item->priv->state->lac = 0;
-    item->priv->state->cell_id = 0;
-    item->priv->state->network = 0;
-    item->priv->state->supported_services = 0;
-    item->priv->state->network_signals_bar = 0;
-    item->priv->state->rat = 0;
-    item->priv->state->network_radio_state = 0;
-    item->priv->state->operator_name_type = 0;
-    item->priv->state->operator_name = 0;
-    item->priv->state->alternative_operator_name = 0;
+    item->priv->state.network_reg_status = 0;
+    item->priv->state.lac = 0;
+    item->priv->state.cell_id = 0;
+    item->priv->state.network = 0;
+    item->priv->state.supported_services = 0;
+    item->priv->state.network_signals_bar = 0;
+    item->priv->state.rat_name = 0;
+    item->priv->state.network_radio_state = 0;
+    item->priv->state.operator_name_type = 0;
+    item->priv->state.operator_name = 0;
+    item->priv->state.alternative_operator_name = 0;
   }
-  connui_cellular_status_item_update_icon(item);
+  connui_cellular_status_menu_item_update_icon(item);
 }
 
 static void
@@ -295,7 +295,7 @@ connui_cellular_status_menu_item_init(ConnuiCellularStatusMenuItem *self)
 
    osso_hw_set_display_event_cb(
      priv->osso_context,
-     (osso_display_event_cb_f *)connui_cellular_status_menu_item_display_cb,
+     (osso_display_event_cb_f *)connui_cellular_status_item_display_cb,
      self);
 
   if (!connui_flightmode_status(connui_cellular_status_item_flightmode_cb, self))
@@ -304,6 +304,6 @@ connui_cellular_status_menu_item_init(ConnuiCellularStatusMenuItem *self)
     g_log(0, G_LOG_LEVEL_WARNING, "Unable to register SIM status");
   if (!connui_cell_net_status_register(connui_cellular_status_item_net_status_cb, self))
     g_log(0, G_LOG_LEVEL_WARNING, "Unable to register cell net status!");
-  connui_cellular_status_item_update_icon(self);
+  connui_cellular_status_menu_item_update_icon(self);
 }
 
