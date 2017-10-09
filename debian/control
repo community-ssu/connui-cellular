@@ -1,0 +1,24 @@
+Source: connui-cellular
+Priority: optional
+Section: x11
+Maintainer: Jonathan Wilson <jfwfreo@tpgi.com.au>
+Build-Depends: debhelper (>= 5), cdbs, libhildon1-dev, libhildondesktop1-dev, osso-af-settings, icd2-dev, libosso-dev, libconnui-dev
+Standards-Version: 3.7.3
+
+Package: connui-statusbar-cellular
+Architecture: any
+Section: x11
+Replaces: osso-connectivity-ui-statusbar
+Depends: ${shlibs:Depends}, ${misc:Depends}, osso-icons-default | osso-icons, osso-connectivity-ui-l10n-mr | osso-connectivity-ui-l10n-mr0, libconnui, libconnui-cellular
+Conflicts: osso-connectivity-ui-statusbar
+Description: Cellular Connectivity statusbar plugin
+ This package provides the Cellular Connectivity statusbar plugin.
+
+Package: connui-statusbar-cellular-dbg
+Architecture: any
+Section: extra
+Depends: ${misc:Depends}, osso-connectivity-ui-statusbar (= ${binary:Version})
+Description: Cellular Connectivity statusbar plugin - debug symbols
+ Cellular Connectivity statusbar plugin.
+ .
+ This package contains the debug symbols.
