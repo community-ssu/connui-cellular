@@ -17,7 +17,7 @@ Description: Cellular Connectivity statusbar plugin
 Package: connui-statusbar-cellular-dbg
 Architecture: any
 Section: extra
-Depends: ${misc:Depends}, osso-connectivity-ui-statusbar (= ${binary:Version})
+Depends: ${misc:Depends}, connui-statusbar-cellular (= ${binary:Version})
 Description: Cellular Connectivity statusbar plugin - debug symbols
  Cellular Connectivity statusbar plugin.
  .
