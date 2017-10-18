@@ -1,3 +1,9 @@
+connui-cellular (2.120+0m5) fremantle; urgency=low
+
+  * Fix so that it actually works
+
+ -- Jonathan Wilson <jfwfreo@tpgi.com.au>  Tue, 17 Oct 2017 23:32:12 -0400
+
 connui-cellular (2.119+0m5) fremantle; urgency=low
 
   * Initial FOSS release.

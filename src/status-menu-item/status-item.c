@@ -11,25 +11,25 @@
 
 #define _(x) dgettext(GETTEXT_PACKAGE, x)
 
-#define CONNUI_CELLULAR_STATUS_MENU_ITEM_TYPE (connui_cellular_status_menu_item_get_type())
-#define CONNUI_CELLULAR_STATUS_MENU_ITEM(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), CONNUI_CELLULAR_STATUS_MENU_ITEM_TYPE, ConnuiCellularStatusMenuItem))
+#define CONNUI_CELLULAR_STATUS_ITEM_TYPE (connui_cellular_status_item_get_type())
+#define CONNUI_CELLULAR_STATUS_ITEM(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), CONNUI_CELLULAR_STATUS_ITEM_TYPE, ConnuiCellularStatusItem))
 
-typedef struct _ConnuiCellularStatusMenuItem ConnuiCellularStatusMenuItem;
-typedef struct _ConnuiCellularStatusMenuItemClass ConnuiCellularStatusMenuItemClass;
-typedef struct _ConnuiCellularStatusMenuItemPrivate ConnuiCellularStatusMenuItemPrivate;
+typedef struct _ConnuiCellularStatusItem ConnuiCellularStatusItem;
+typedef struct _ConnuiCellularStatusItemClass ConnuiCellularStatusItemClass;
+typedef struct _ConnuiCellularStatusItemPrivate ConnuiCellularStatusItemPrivate;
 
-struct _ConnuiCellularStatusMenuItem
+struct _ConnuiCellularStatusItem
 {
   HDStatusMenuItem parent;
-  ConnuiCellularStatusMenuItemPrivate *priv;
+  ConnuiCellularStatusItemPrivate *priv;
 };
 
-struct _ConnuiCellularStatusMenuItemClass
+struct _ConnuiCellularStatusItemClass
 {
   HDStatusMenuItemClass parent;
 };
 
-struct _ConnuiCellularStatusMenuItemPrivate
+struct _ConnuiCellularStatusItemPrivate
 {
   struct network_state state;
   guint status;
@@ -49,17 +49,17 @@ enum inetstate_status
 gchar *current_mode_icon;
 gchar *current_bars_icon;
 
-HD_DEFINE_PLUGIN_MODULE(ConnuiCellularStatusMenuItem,
-                        connui_cellular_status_menu_item,
+HD_DEFINE_PLUGIN_MODULE(ConnuiCellularStatusItem,
+                        connui_cellular_status_item,
                         HD_TYPE_STATUS_MENU_ITEM)
 
 static void
-connui_cellular_status_menu_item_class_finalize(ConnuiCellularStatusMenuItemClass *klass)
+connui_cellular_status_item_class_finalize(ConnuiCellularStatusItemClass *klass)
 {
 }
 
 static void
-connui_cellular_status_menu_item_update_icon(ConnuiCellularStatusMenuItem *item)
+connui_cellular_status_item_update_icon(ConnuiCellularStatusItem *item)
 {
   GdkPixbuf *pixbuf;
   GdkPixbuf *bars_icon_pixbuf;
@@ -67,7 +67,7 @@ connui_cellular_status_menu_item_update_icon(ConnuiCellularStatusMenuItem *item)
   GdkPixbuf *mode_icon_pixbuf;
   gchar *mode_icon;
   gchar *bars_icon;
-  ConnuiCellularStatusMenuItemPrivate *priv = item->priv;
+  ConnuiCellularStatusItemPrivate *priv = item->priv;
   if (priv->display_state == OSSO_DISPLAY_OFF)
   {
     priv->needs_display_state_update = TRUE;
@@ -173,8 +173,8 @@ static void
 connui_cellular_status_item_display_cb(osso_display_state_t state,
                                             gpointer *user_data)
 {
-  ConnuiCellularStatusMenuItem *item =
-      CONNUI_CELLULAR_STATUS_MENU_ITEM(user_data);
+  ConnuiCellularStatusItem *item =
+      CONNUI_CELLULAR_STATUS_ITEM(user_data);
 
   g_return_if_fail(item != NULL && item->priv != NULL);
 
@@ -183,7 +183,7 @@ connui_cellular_status_item_display_cb(osso_display_state_t state,
   {
     if (item->priv->needs_display_state_update)
     {
-      connui_cellular_status_menu_item_update_icon(item);
+      connui_cellular_status_item_update_icon(item);
       item->priv->needs_display_state_update = FALSE;
     }
   }
@@ -192,32 +192,32 @@ connui_cellular_status_item_display_cb(osso_display_state_t state,
 static void
 connui_cellular_status_item_flightmode_cb(gboolean offline, gpointer user_data)
 {
-  ConnuiCellularStatusMenuItem *item =
-      CONNUI_CELLULAR_STATUS_MENU_ITEM(user_data);
+  ConnuiCellularStatusItem *item =
+      CONNUI_CELLULAR_STATUS_ITEM(user_data);
 
   g_return_if_fail(item != NULL && item->priv != NULL);
 
   item->priv->offline = offline;
-  connui_cellular_status_menu_item_update_icon(item);
+  connui_cellular_status_item_update_icon(item);
 }
 
 static void
 connui_cellular_status_item_sim_status_cb(guint status, gpointer user_data)
 {
-  ConnuiCellularStatusMenuItem *item =
-      CONNUI_CELLULAR_STATUS_MENU_ITEM(user_data);
+  ConnuiCellularStatusItem *item =
+      CONNUI_CELLULAR_STATUS_ITEM(user_data);
 
   g_return_if_fail(item != NULL && item->priv != NULL);
 
   item->priv->status = status;
-  connui_cellular_status_menu_item_update_icon(item);
+  connui_cellular_status_item_update_icon(item);
 }
 
 static void
 connui_cellular_status_item_net_status_cb(struct network_state *state, gpointer user_data)
 {
-  ConnuiCellularStatusMenuItem *item =
-      CONNUI_CELLULAR_STATUS_MENU_ITEM(user_data);
+  ConnuiCellularStatusItem *item =
+      CONNUI_CELLULAR_STATUS_ITEM(user_data);
   if (state)
   {
     item->priv->state.network_reg_status = state->network_reg_status;
@@ -246,14 +246,14 @@ connui_cellular_status_item_net_status_cb(struct network_state *state, gpointer 
     item->priv->state.operator_name = 0;
     item->priv->state.alternative_operator_name = 0;
   }
-  connui_cellular_status_menu_item_update_icon(item);
+  connui_cellular_status_item_update_icon(item);
 }
 
 static void
-connui_cellular_status_menu_item_finalize(GObject *self)
+connui_cellular_status_item_finalize(GObject *self)
 {
-  ConnuiCellularStatusMenuItemPrivate *priv =
-      CONNUI_CELLULAR_STATUS_MENU_ITEM(self)->priv;
+  ConnuiCellularStatusItemPrivate *priv =
+      CONNUI_CELLULAR_STATUS_ITEM(self)->priv;
 
   if (priv->osso_context)
   {
@@ -271,23 +271,23 @@ connui_cellular_status_menu_item_finalize(GObject *self)
   connui_cell_sim_status_close(connui_cellular_status_item_sim_status_cb);
   connui_flightmode_close(connui_cellular_status_item_flightmode_cb);
   
-  G_OBJECT_CLASS(connui_cellular_status_menu_item_parent_class)->finalize(self);
+  G_OBJECT_CLASS(connui_cellular_status_item_parent_class)->finalize(self);
 }
 
 static void
-connui_cellular_status_menu_item_class_init(ConnuiCellularStatusMenuItemClass *klass)
+connui_cellular_status_item_class_init(ConnuiCellularStatusItemClass *klass)
 {
-  G_OBJECT_CLASS(klass)->finalize = connui_cellular_status_menu_item_finalize;
-  g_type_class_add_private(klass, sizeof(ConnuiCellularStatusMenuItemPrivate));
+  G_OBJECT_CLASS(klass)->finalize = connui_cellular_status_item_finalize;
+  g_type_class_add_private(klass, sizeof(ConnuiCellularStatusItemPrivate));
 }
 
 static void
-connui_cellular_status_menu_item_init(ConnuiCellularStatusMenuItem *self)
+connui_cellular_status_item_init(ConnuiCellularStatusItem *self)
 {
-  ConnuiCellularStatusMenuItemPrivate *priv =
+  ConnuiCellularStatusItemPrivate *priv =
       G_TYPE_INSTANCE_GET_PRIVATE(self,
-                                  CONNUI_CELLULAR_STATUS_MENU_ITEM_TYPE,
-                                  ConnuiCellularStatusMenuItemPrivate);
+                                  CONNUI_CELLULAR_STATUS_ITEM_TYPE,
+                                  ConnuiCellularStatusItemPrivate);
 
   self->priv = priv;
   priv->pixbuf_cache = connui_pixbuf_cache_new();
@@ -304,6 +304,6 @@ connui_cellular_status_menu_item_init(ConnuiCellularStatusMenuItem *self)
     g_log(0, G_LOG_LEVEL_WARNING, "Unable to register SIM status");
   if (!connui_cell_net_status_register(connui_cellular_status_item_net_status_cb, self))
     g_log(0, G_LOG_LEVEL_WARNING, "Unable to register cell net status!");
-  connui_cellular_status_menu_item_update_icon(self);
+  connui_cellular_status_item_update_icon(self);
 }
 
